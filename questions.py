@@ -2,5 +2,5 @@ import json
 import os
 
 MAX_REPO = 25
-SOURCE_REPO = "codertjay/2026-07-metric-dev-oyakhil-main"
-REPO_NAME = "2026-07-metric-dev-oyakhil-main"
+SOURCE_REPO = "aptos-labs/aptos-core"
+REPO_NAME = "aptos-core"
