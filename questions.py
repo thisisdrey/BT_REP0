@@ -1,9 +1,9 @@
 import json
 import os
 
-MAX_REPO = 30
-SOURCE_REPO = "aptos-labs/aptos-core"
-REPO_NAME = "aptos-cores"
+MAX_REPO = 25
+SOURCE_REPO = "Kohvert/aptos-core--001"
+REPO_NAME = "aptos-core--001"
 TREE = ""
 BRANCH = ""
 # Example:
