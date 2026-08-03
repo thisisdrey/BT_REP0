@@ -1,9 +1,9 @@
 import json
 import os
 
-MAX_REPO = 40
-SOURCE_REPO = "paritytech/polkadot-sdk"
-REPO_NAME = "polkadot-sdk"
+MAX_REPO = 25
+SOURCE_REPO = "anza-xyz/agave"
+REPO_NAME = "agave"
 TREE = ""
 BRANCH = ""
 # Example:
