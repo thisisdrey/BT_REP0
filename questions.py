@@ -2,8 +2,8 @@ import json
 import os
 
 MAX_REPO = 25
-SOURCE_REPO = "slackhq/nebula"
-REPO_NAME = "nebula"
+SOURCE_REPO = "codertjay/gitaly"
+REPO_NAME = "gitaly"
 TREE = ""
 BRANCH = ""
 # Example:
