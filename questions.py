@@ -2,8 +2,8 @@ import json
 import os
 
 MAX_REPO = 25
-SOURCE_REPO = "near/intents"
-REPO_NAME = "intents"
+SOURCE_REPO = "stacks-network/stacks-core"
+REPO_NAME = "stacks-core"
 TREE = ""
 BRANCH = ""
 # Example:
