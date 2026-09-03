@@ -1,9 +1,9 @@
 import json
 import os
 
-MAX_REPO = 25
-SOURCE_REPO = "stacks-network/stacks-core"
-REPO_NAME = "stacks-core"
+MAX_REPO = 4
+SOURCE_REPO = "Hinkal-Protocol/Hinkal-Contracts-Circuits"
+REPO_NAME = "Hinkal-Contracts-Circuits"
 TREE = ""
 BRANCH = ""
 # Example:
