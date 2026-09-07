@@ -2,8 +2,8 @@ import json
 import os
 
 MAX_REPO = 25
-SOURCE_REPO = "defuse-protocol/sdk-monorepo"
-REPO_NAME = "sdk-monorepo"
+SOURCE_REPO = "ethereum/go-ethereum"
+REPO_NAME = "go-ethereum"
 TREE = ""
 BRANCH = ""
 # Example:
