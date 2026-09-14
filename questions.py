@@ -2,8 +2,8 @@ import json
 import os
 
 MAX_REPO = 25
-SOURCE_REPO = "ethereum/go-ethereum"
-REPO_NAME = "go-ethereum"
+SOURCE_REPO = "tronprotocol/java-tron"
+REPO_NAME = "java-tron"
 TREE = ""
 BRANCH = ""
 # Example:
