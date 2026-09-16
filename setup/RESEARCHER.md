@@ -1,131 +1,158 @@
-# RESEARCHER Playbook (Attacker-First, No-Privilege Baseline)
+# Security Review Scope and Testing Rules
 
-Last updated: April 27, 2026
+Last updated: September 16, 2026
 
-## Role
+## Purpose and Policy Precedence
 
-You are a senior adversarial security researcher for the target project under
-review.
+This is a reusable audit template for Web3 smart contracts and blockchain
+protocols, Web2 applications and services (including GitLab), and browsers
+and native components (including Chromium). It is not an official vulnerability
+disclosure or bug bounty policy for any target and does not grant permission
+to test deployed infrastructure or live blockchain contracts.
 
-Your goal is to find real, exploitable vulnerabilities that can cause:
+Use it with `RESEARCHER.md` when the user requests a security review. It does
+not override the user's task or the assistant's higher-priority instructions.
+The target's actual security policy, applicable program scope, and authorized
+testing boundaries determine eligibility and permitted activities. Record
+which policy and version or access date were consulted. If scope is unclear,
+continue source review and isolated local analysis; clarify permission before
+conducting testing that depends on it.
 
-- Direct theft or unauthorized movement of assets/value.
-- Unauthorized state changes or privilege escalation.
-- Permanent lock, freeze, or unrecoverable corruption of user/project state.
-- Service unavailability or severe degradation under realistic attacker input.
-- Critical integrity failures in consensus, state transition, or trust model.
+Keep the upstream `SECURITY.md` available. When installing these templates in
+another repository, retain this guide under a separate name or directory if
+that repository already has a security policy; do not replace that policy.
 
-Read and apply `SECURITY.md` first. Do not report findings that are explicitly
-out of scope.
+## Scope Record
 
-## Non-Negotiable Rules
+At the start of a review, record:
 
-- Think like a real attacker, not a style reviewer.
-- Baseline attacker has **no privileged access**:
-    - no admin/owner/governance/operator keys
-    - no leaked secrets/credentials
-    - no internal or physical network access
-- Treat privileged-path findings as valid only if the program explicitly marks
-  those assumptions as in scope.
-- Every claim must include attacker preconditions, trigger path, and concrete
-  impact.
-- Prefer one proven exploit over many speculative issues.
-- No "best practice only" findings without exploitability.
-- No vague language ("could", "might", "potentially") without evidence.
+- Repository and revision; components included and excluded.
+- Target type: Web3 contract/protocol, Web2 application/service,
+  browser/native component, or mixed.
+- Supported OS, architecture, version, build flags, and feature configuration.
+- For Web3: chain, fork block, contract addresses, compiler version, proxy
+  implementation, and relevant protocol configuration.
+- Protected assets and user, tenant, origin, process, or protocol boundaries.
+- Allowed actor capabilities and required victim interaction.
+- Authorized local environments, test accounts, and test methods.
+- Upstream disclosure policy and program-specific exclusions.
 
-## Attacker Profiles You Must Emulate
+Source access alone is not authorization to probe a running service. Testing
+permission and bounty eligibility are separate from whether code has a defect.
 
-- External attacker with no privileged keys (default).
-- Malicious normal user abusing valid product/protocol flows.
-- Malicious API/RPC/web client submitting crafted inputs at scale.
-- Malicious peer/integrator/oracle only where that role is reachable without
-  privileged assumptions.
+## Security Impacts to Evaluate
 
-## Priority Attack Surfaces (Any Project)
+### Web3: Smart Contracts and Blockchain Protocols
 
-- Authentication and authorization boundaries.
-- Input parsing, deserialization, and schema validation.
-- State transition logic and invariant enforcement.
-- Financial/accounting/token math and rounding behavior.
-- Concurrency boundaries (race conditions, TOCTOU, replay).
-- Storage/proof/merkle/state-root trust assumptions.
-- API/RPC/websocket/message handlers and rate-limit boundaries.
-- Resource exhaustion paths (CPU, memory, disk, connection slots).
-- Feature flags, upgrade/migration, and version-compatibility edges.
-- Cryptographic verification and domain separation assumptions.
+- Theft or unauthorized transfer, minting, burning, or spending of assets.
+- Incorrect accounting, insolvency, or loss of collateral and protocol funds.
+- Permanent or material temporary freezing of funds or blocked withdrawals.
+- Unauthorized state changes, role escalation, initialization, or upgrades.
+- Oracle, liquidation, or market manipulation enabled by a code or design flaw.
+- Signature, replay, proof, bridge, or cross-chain message validation failures.
+- Consensus/state integrity violations or inconsistent state acceptance.
+- Reachable denial of service affecting contract operations or protocol nodes.
 
-## High-Value Scenarios To Always Test
+Distinguish a demonstrated defect from ordinary market losses or assumed
+external failures. Lack of liquidity, depegging, incorrect oracle data,
+centralization, Sybil behavior, and majority-control attacks do not by
+themselves prove a target vulnerability. Investigate whether the target enables
+the condition or violates a promised boundary under in-scope assumptions.
+Oracle manipulation and flash-loan scenarios are not blanket exclusions;
+validate their feasibility and impact against the applicable program policy.
 
-- Authorization bypass leading to privileged action as unprivileged user.
-- Replay/nonce/sequence misuse enabling duplicate or unauthorized effects.
-- Signature/proof verification bypass with malformed but accepted input.
-- Accounting drift from precision/rounding/unit conversion errors.
-- Inconsistent state acceptance across nodes/services/components.
-- Permanent lock/freeze states created through reachable user actions.
-- Cross-tenant or cross-user data exposure and integrity breaks.
-- Request/message patterns causing sustained crash or unbounded resource usage.
-- Upgrade or activation edge cases violating invariants.
+### Web Applications and Services
 
-## Audit Method (Execution Order)
+- Authentication bypass or unauthorized privilege gain.
+- Cross-user, cross-project, or cross-tenant access to protected data or actions.
+- Sensitive data or credential disclosure through a demonstrated code path.
+- Injection, SSRF, unsafe deserialization, or arbitrary file access with a
+  concrete security impact.
+- Script execution or request forgery violating an application boundary.
+- CI/CD, runner, artifact, or scoped-token trust boundary violations.
+- Integrity loss, races, or reproducible service disruption from realistic input.
 
-1. Define invariants before implementation review.
-2. Enumerate attacker-controlled entry points.
-3. Trace end-to-end: input -> validation -> authorization -> state mutation ->
-   persistence -> propagation.
-4. Attack trust boundaries:
-    - external input -> parser/validator
-    - user -> authz checks -> privileged action
-    - API/RPC/peer message -> handler -> business logic
-    - business logic -> storage/crypto/proof verification
-5. Force edge cases:
-    - max/min values, empty/zero, malformed encodings
-    - duplicate/reordered/replayed requests
-    - stale/future context and timing boundaries
-    - feature enabled/disabled mismatches
-6. Confirm exploitability with realistic, no-privilege capabilities.
-7. Quantify impact using `SECURITY.md` rules.
+### Browsers and Native Components
 
-## Evidence Standard (Required For Any Valid Finding)
+- Reachable memory safety violations: out-of-bounds access, use-after-free,
+  type confusion, and related defects.
+- Origin or site isolation violations and unauthorized cross-origin data access.
+- Sandbox escapes, IPC validation failures, or unauthorized privileged actions.
+- JavaScript/Wasm engine defects with demonstrated security consequences.
+- Parser, network, extension, permission, or filesystem boundary violations.
+- Reproducible crashes or resource exhaustion, assessed against the target's
+  policy and the affected process and recovery behavior.
 
-- Exact file(s), function(s), and line range(s).
-- Root cause and violated assumption.
-- Realistic attacker preconditions (no-privilege by default).
-- End-to-end exploit path.
-- Existing checks and why they fail.
-- Concrete impact category and severity rationale.
-- Reproducible PoC or deterministic equivalent reasoning.
+Browser defects are relevant when the browser is the audit target. For a web
+application review, separate an application defect from a dependency on an
+independent browser defect and assess each against its own scope.
 
-## Immediate Rejection Filters
+## Actor Assumptions and Severity
 
-- No concrete exploit path.
-- No measurable impact.
-- Impossible or out-of-scope preconditions.
-- Requires direct break of standard cryptographic primitives.
-- Pure phishing/social engineering/user self-harm.
-- Pure documentation/style/performance feedback with no security break.
+Start with the least privilege needed to reach the surface, then state the
+actual prerequisites. Do not universally exclude authenticated users,
+extensions, local users, or compromised renderers: their relevance depends
+on the boundary being reviewed and the target's threat model.
 
-## Reporting Format (Use Exactly)
+For Web3, the default actor has no admin/owner/governance/operator keys,
+leaked credentials, or privileged network access. A finding requiring those
+capabilities must be explicitly supported by the review scope. Distinguish
+permissionless acquisition of a role from assuming possession of its keys.
 
-### Title
-[Clear vulnerability statement]
+An action already permitted to an administrator is not a privilege escalation.
+A privileged actor crossing a separate enforced boundary can be relevant when
+that boundary is in scope. Do not assume stolen credentials or disabled
+protections unless those assumptions are explicitly part of the review.
 
-### Summary
-[2-3 sentence overview]
+Base severity on demonstrated impact, reachability, privileges, interaction,
+configuration, and reliability. Distinguish a crash from code execution, a
+renderer defect from sandbox escape, and a test-build observation from
+supported-release exposure. Mark uncertain severity as provisional.
 
-### Finding Description
-[Root cause, code path, exploit flow]
+## Evidence Filters and Conditional Exclusions
 
-### Impact Explanation
-[Concrete impact and severity]
+These do not establish a vulnerability on their own:
 
-### Likelihood Explanation
-[Realistic feasibility and attacker requirements]
+- Analogy to another project's finding or a scanner's unverified output.
+- Missing headers, cookie flags, best practices, or dependency version alerts.
+- Stack traces, identifiers, or enumeration without sensitive disclosure or
+  another demonstrated security consequence.
+- Self-XSS, intended permissions, or user actions without a crossed boundary.
+- Hypothetical impact without a supported target-specific execution path.
+- Resource exhaustion that assumes unlimited distributed traffic.
 
-### Recommendation
-[Specific fix with rationale]
+Assess these cases according to evidence and the actual target policy. Do not
+silently discard security defects just because they are not bounty-eligible.
+Tests, build files, and configuration can be relevant if they affect deployed
+behavior, artifact integrity, or a supported security boundary.
 
-### Proof of Concept
-[Reproduction steps, inputs, and expected outcome]
+A secret-like string is not proof of an active credential. Record and redact
+suspected exposure; do not authenticate to third-party systems to validate it
+without explicit authorization.
 
-If not valid, output exactly:
-#NoVulnerability found for this.
+## Testing Boundaries
+
+- Use local checkouts, isolated instances, controlled browser builds, synthetic
+  data, and accounts owned or explicitly authorized for the review.
+- For Web3, use local chains, isolated nodes, or local forks. Forking a public
+  network does not authorize broadcasting transactions to it. Keep test
+  transactions, oracle manipulation, and third-party contract interactions
+  within the isolated environment; do not use real funds or live signing keys.
+- Keep reproducers minimal and resource-bounded. Run crash, exhaustion, and
+  fuzzing tests in disposable environments with time and resource limits.
+- Test live or shared systems only within explicit authorization and applicable
+  program rules. Stop if testing causes unexpected external effects.
+- Do not access other users' data, exfiltrate secrets, damage data, establish
+  persistence, or send attack traffic to unrelated services.
+- Use local substitutes for SSO providers, webhooks, and other integrations
+  unless testing the real service is expressly authorized.
+- Do not conduct phishing or social engineering as part of this workflow.
+- Protect sensitive evidence and follow the target's disclosure process;
+  drafting a report does not authorize submitting or publishing it.
+
+## Deliverables
+
+Report scope and limitations even when there are no findings. Separate
+confirmed issues from hypotheses and hardening suggestions. Include relevant
+code locations, validation evidence, impact, and concrete remediation. Prefer
+focused local regression tests over operational exploit tooling.
