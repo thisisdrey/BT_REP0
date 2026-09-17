@@ -2,8 +2,8 @@ import json
 import os
 
 MAX_REPO = 25
-SOURCE_REPO = "codertjay/WebKit"
-REPO_NAME = "WebKit"
+SOURCE_REPO = "golang/go"
+REPO_NAME = "go"
 TREE = ""
 BRANCH = ""
 # Example:
