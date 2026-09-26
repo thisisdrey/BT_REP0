@@ -2,8 +2,8 @@ import json
 import os
 
 MAX_REPO = 25
-SOURCE_REPO = "golang/go"
-REPO_NAME = "go"
+SOURCE_REPO = "autonomoussoftware/metronome-synth-public"
+REPO_NAME = "metronome-synth-public"
 TREE = ""
 BRANCH = ""
 # Example:
